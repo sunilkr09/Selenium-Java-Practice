@@ -1,5 +1,6 @@
 import base.Browser;
 import base.DesktopBrowserType;
+import downloader.Downloader;
 import io.restassured.response.Response;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -596,10 +597,27 @@ public class ShawnFrost {
         Assert.assertTrue(new GoodJob(driver).isSuccessMessageShowed(), "Problem Not Solved");
     }
 
-    @Test(testName = "Get Sue's Number", enabled = false)
+    @Test(testName = "Get Sue's Number")
     void GetSuesNumber() {
         driver.get("https://obstaclecourse.tricentis.com/Obstacles/72946");
-        //TODO: Using Download path
+
+        WebElement catalogLink = driver.findElement(By.id("downloadSolution"));
+
+        String downloadPath = System.getProperty("java.io.tmpdir");
+        Downloader fileDownloader = new Downloader(driver)
+                .setDownloadPath(downloadPath);
+        String downloadedXMLPath = fileDownloader.startDownload(catalogLink);
+
+        XMLParser xmlParser = new XMLParser()
+                .fromXMLFile(downloadedXMLPath);
+
+        String prefix = xmlParser.getStringValueByXPath("//number[@id='Sue']/prefix");
+        String number = xmlParser.getStringValueByXPath("//number[@id='Sue']/number");
+        String value = prefix + number;
+        System.out.println(value);
+        driver.findElement(By.id("NumberSue")).sendKeys(value);
+
+        Assert.assertTrue(new GoodJob(driver).isSuccessMessageShowed(), "Problem Not Solved");
     }
 
     @AfterSuite(alwaysRun = true)
