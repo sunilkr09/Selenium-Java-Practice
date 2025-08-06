@@ -58,6 +58,12 @@ public class Browser {
         options.addArguments("--headless=new");
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-features=VizDisplayCompositor");
+        options.addArguments("--disable-blink-features=AutomationControlled");
         return new ChromeDriver(options);
     }
 
@@ -66,6 +72,12 @@ public class Browser {
         options.addArguments("--headless=new");
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-features=VizDisplayCompositor");
+        options.addArguments("--disable-blink-features=AutomationControlled");
         return new EdgeDriver(options);
     }
 
@@ -79,6 +91,10 @@ public class Browser {
         EdgeOptions options = new EdgeOptions();
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-features=VizDisplayCompositor");
+        options.addArguments("--disable-blink-features=AutomationControlled");
         return new EdgeDriver(options);
     }
 }

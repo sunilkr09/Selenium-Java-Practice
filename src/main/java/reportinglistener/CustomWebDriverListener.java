@@ -9,80 +9,64 @@ import org.openqa.selenium.support.events.WebDriverListener;
 public class CustomWebDriverListener implements WebDriverListener {
 
     @Override
-    public void beforeClick(WebElement element) {
-        ExtentManager.getTest().log(Status.INFO, "Attempting to click on the \"" + getElementDescription(element) + "\" element.");
-    }
-
-    @Override
     public void afterClick(WebElement element) {
-        ExtentManager.getTest().log(Status.INFO, "Successfully clicked on the \"" + getElementDescription(element) + "\" element.");
-    }
-
-    @Override
-    public void beforeSendKeys(WebElement element, CharSequence... keysToSend) {
-        ExtentManager.getTest().log(Status.INFO, "Entering text \"" + String.join(",", keysToSend) + "\" into the \"" + getElementDescription(element) + "\" field.");
+        ExtentManager.getTest().log(Status.INFO, "Clicked on: " + getElementDescription(element));
     }
 
     @Override
     public void afterSendKeys(WebElement element, CharSequence... keysToSend) {
-        ExtentManager.getTest().log(Status.INFO, "Successfully entered text into the \"" + getElementDescription(element) + "\" field.");
-    }
-
-    @Override
-    public void beforeClear(WebElement element) {
-        ExtentManager.getTest().log(Status.INFO, "Clearing text from the \"" + getElementDescription(element) + "\" field.");
+        ExtentManager.getTest().log(Status.INFO, "Entered text into: " + getElementDescription(element));
     }
 
     @Override
     public void afterClear(WebElement element) {
-        ExtentManager.getTest().log(Status.INFO, "Successfully cleared text from the \"" + getElementDescription(element) + "\" field.");
-    }
-
-    @Override
-    public void beforeTo(WebDriver.Navigation navigation, String url) {
-        ExtentManager.getTest().log(Status.INFO, "Navigating to URL: " + url);
+        ExtentManager.getTest().log(Status.INFO, "Cleared text from: " + getElementDescription(element));
     }
 
     @Override
     public void afterTo(WebDriver.Navigation navigation, String url) {
-        ExtentManager.getTest().log(Status.INFO, "Successfully navigated to URL: " + url);
-    }
-
-    @Override
-    public void beforeFindElement(WebDriver driver, By by) {
-        ExtentManager.getTest().log(Status.INFO, "Searching for element: " + by.toString());
+        ExtentManager.getTest().log(Status.INFO, "Navigated to URL: " + url);
     }
 
     @Override
     public void afterFindElement(WebDriver driver, By by, WebElement result) {
         if (result != null) {
-            ExtentManager.getTest().log(Status.INFO, "Found element: \"" + getElementDescription(result) + ".\"");
+            ExtentManager.getTest().log(Status.INFO, "Found element: " + getElementDescription(result));
         } else {
-            ExtentManager.getTest().log(Status.WARNING, "Element not found: " + by.toString());
+            ExtentManager.getTest().log(Status.WARNING, "Element not found by: " + by.toString());
         }
     }
 
     @Override
-    public void beforeQuit(WebDriver driver) {
-        ExtentManager.getTest().log(Status.INFO, "Closing the browser.");
-    }
-
-    @Override
     public void afterQuit(WebDriver driver) {
-        ExtentManager.getTest().log(Status.INFO, "Browser closed successfully.");
+        ExtentManager.getTest().log(Status.INFO, "Browser session ended.");
     }
 
     // Helper method to get a descriptive name for the element
     private String getElementDescription(WebElement element) {
         String description = element.getTagName();
-        if (element.getAttribute("id") != null && !element.getAttribute("id").isEmpty()) {
-            description += " (ID: " + element.getAttribute("id") + ")";
-        } else if (element.getAttribute("name") != null && !element.getAttribute("name").isEmpty()) {
-            description += " (Name: " + element.getAttribute("name") + ")";
-        } else if (element.getAttribute("class") != null && !element.getAttribute("class").isEmpty()) {
-            description += " (Class: " + element.getAttribute("class") + ")";
-        } else if (element.getText() != null && !element.getText().isEmpty()) {
-            description += " (Text: \"" + element.getText() + "\")";
+        String id = element.getAttribute("id");
+        String name = element.getAttribute("name");
+        String className = element.getAttribute("class");
+        String placeholder = element.getAttribute("placeholder");
+        String value = element.getAttribute("value");
+        String ariaLabel = element.getAttribute("aria-label");
+        String text = element.getText();
+
+        if (ariaLabel != null && !ariaLabel.isEmpty()) {
+            description = ariaLabel;
+        } else if (placeholder != null && !placeholder.isEmpty()) {
+            description = placeholder;
+        } else if (value != null && !value.isEmpty()) {
+            description = value;
+        } else if (id != null && !id.isEmpty()) {
+            description += " (id: " + id + ")";
+        } else if (name != null && !name.isEmpty()) {
+            description += " (name: " + name + ")";
+        } else if (className != null && !className.isEmpty()) {
+            description += " (class: " + className + ")";
+        } else if (text != null && !text.isEmpty()) {
+            description += " (text: \"" + text + "\")";
         }
         return description;
     }
