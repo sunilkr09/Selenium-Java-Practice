@@ -7,6 +7,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import reportinglistener.CustomWebDriverListener;
 
 import java.time.Duration;
 
@@ -16,29 +18,31 @@ public class Browser {
 
         WebDriver driver;
         switch (browserName) {
-            case "chrome":
+            case DesktopBrowserType.CHROME:
                 driver = openChromeBrowser();
                 break;
-            case "firefox":
+            case DesktopBrowserType.FIREFOX:
                 driver = openFirefoxBrowser();
                 break;
-            case "chrome_headless":
+            case DesktopBrowserType.CHROME_HEADLESS:
                 driver = openHeadlessChrome();
                 break;
-            case "edge_headless":
+            case DesktopBrowserType.EDGE_HEADLESS:
                 driver = openHeadlessEdge();
                 break;
-            case "firefox_headless":
+            case DesktopBrowserType.FIREFOX_HEADLESS:
                 driver = openHeadlessFirefox();
                 break;
-            case "edge":
+            case DesktopBrowserType.EDGE:
             default:
                 driver = openEdgeBrowser();
         }
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(40));
         driver.manage().window().maximize();
-        return driver;
+
+        CustomWebDriverListener listener = new CustomWebDriverListener();
+        return new EventFiringDecorator<>(listener).decorate(driver);
     }
 
     private WebDriver openChromeBrowser() {
@@ -72,6 +76,9 @@ public class Browser {
     }
 
     private WebDriver openEdgeBrowser() {
-        return new EdgeDriver();
+        EdgeOptions options = new EdgeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        return new EdgeDriver(options);
     }
 }

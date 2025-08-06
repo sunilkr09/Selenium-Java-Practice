@@ -1,21 +1,32 @@
 package reportinglistener;
 
+import base.BrowserManager;
 import com.aventstack.extentreports.ExtentReporter;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.IOException;
+
 public class ExtentReportListener extends TestListenerAdapter {
     private ExtentReports extentReports;
-    private ExtentTest extentTest;
 
     @Override
     public void onStart(ITestContext testContext) {
+        File screenshotDir = new File("test-output/screenshots");
+        if (!screenshotDir.exists()) {
+            screenshotDir.mkdirs();
+        }
         ExtentReporter htmlReporter = new ExtentHtmlReporter("test-output/ExtentReport.html");
         extentReports = new ExtentReports();
         extentReports.attachReporter(htmlReporter);
@@ -37,6 +48,7 @@ public class ExtentReportListener extends TestListenerAdapter {
     @Override
     public void onFinish(ITestContext testContext) {
         extentReports.flush();
+        ExtentManager.removeTest();
     }
 
     @Override
@@ -46,22 +58,39 @@ public class ExtentReportListener extends TestListenerAdapter {
                 .testName();
         if (testName.isEmpty())
             testName = result.getMethod().getMethodName();
-        extentTest = extentReports.createTest(testName);
+        ExtentTest extentTest = extentReports.createTest(testName);
+        ExtentManager.setTest(extentTest);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        extentTest.log(Status.PASS, "Test passed");
+        ExtentManager.getTest().log(Status.PASS, "Test passed");
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        extentTest.log(Status.FAIL, "Test failed");
-        extentTest.log(Status.FAIL, result.getThrowable());
+        ExtentManager.getTest().log(Status.FAIL, "Test failed");
+        ExtentManager.getTest().log(Status.FAIL, result.getThrowable());
+
+        try {
+            WebDriver driver = BrowserManager.getDriver();
+            if (driver != null) {
+                File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                String screenshotName = result.getName() + ".png";
+                File destFile = new File("test-output/screenshots/" + screenshotName);
+                FileUtils.copyFile(screenshot, destFile);
+                ExtentManager.getTest().addScreenCaptureFromPath(destFile.getAbsolutePath());
+            } else {
+                ExtentManager.getTest().log(Status.WARNING, "Could not capture screenshot: WebDriver instance is null.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            ExtentManager.getTest().log(Status.ERROR, "Error capturing screenshot: " + e.getMessage());
+        }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        extentTest.log(Status.SKIP, "Test skipped");
+        ExtentManager.getTest().log(Status.SKIP, "Test skipped");
     }
 }
