@@ -29,6 +29,12 @@ public class CustomWebDriverListener implements WebDriverListener {
     }
 
     @Override
+    public void afterGet(WebDriver driver, String url) {
+        String edgeIconURL = "https://img.icons8.com/?size=100&id=112155&format=png&color=000000";
+        ExtentManager.getTest().log(Status.INFO, "<img src='" + edgeIconURL + "' width='24' height='24'> Opened URL: " + url.trim());
+    }
+
+    @Override
     public void afterFindElement(WebDriver driver, By by, WebElement result) {
         if (result != null) {
             ExtentManager.getTest().log(Status.INFO, "Found element: " + getElementDescription(result));
