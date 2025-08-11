@@ -33,7 +33,7 @@ jobs:
           echo "app deployed successfully"
           
   test:
-
+    needs: build
     runs-on: ${{github.event.inputs.runs_on}}
 
     steps:
