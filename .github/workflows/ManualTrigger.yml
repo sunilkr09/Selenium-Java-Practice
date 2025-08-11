@@ -21,6 +21,17 @@ on:
 #    branches: [ "master" ]
 
 jobs:
+  build:
+    runs-on: ${{github.event.inputs.runs_on}}
+    steps:
+      - name: Build Environment Setup
+        run:
+          echo "build env created"
+          
+      - name: Build and deployed the App
+        run:
+          echo "app deployed successfully"
+          
   test:
 
     runs-on: ${{github.event.inputs.runs_on}}
