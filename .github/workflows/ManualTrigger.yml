@@ -30,13 +30,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6.0.2
 
-      - name: Setup Edge
-        if: failure() || success()
-      # uses: browser-actions/setup-edge@5a55d8fc0f012aa6e16b582df5bf9d6274bda7da
-        uses: browser-actions/setup-edge@v1.1.1
-        with:
-        # The Edge version to be installed.  Supported versions are "stable", "beta", "dev". Optional
-          edge-version: stable
+      # - name: Setup Edge
+      #   if: failure() || success()
+      # # uses: browser-actions/setup-edge@5a55d8fc0f012aa6e16b582df5bf9d6274bda7da
+      #   uses: browser-actions/setup-edge@v1.1.1
+      #   with:
+      #   # The Edge version to be installed.  Supported versions are "stable", "beta", "dev". Optional
+      #     edge-version: stable
 
       - name: Set up JDK 25
         uses: actions/setup-java@v5.1.0
